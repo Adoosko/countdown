@@ -1,7 +1,9 @@
 "use client";
 import { cn } from "@/lib/utils";
+import { VolumeX, Volume2 } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import ReactPlayer from "react-player";
 
 export default function Home() {
   const [days, setDays] = useState(0);
@@ -9,6 +11,8 @@ export default function Home() {
   const [hours, setHours] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [timeChange, setTimeChange] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   const countdown = () => {
     const now = new Date().getTime();
@@ -38,9 +42,14 @@ export default function Home() {
     setTimeout(countdown, 1000);
   }, [days, hours, minutes, seconds, timeChange]);
 
+  const handleClick = () => {
+    setMuted(!muted);
+    setIsPlaying(!isPlaying);
+  };
   return (
     <main>
       <div className="w-[100vw] h-[100vh] z-[-1] fixed ">
+        <ReactPlayer url="/christmas-song.mp3" playing={isPlaying} loop />
         <Image
           alt="The beautiful nature covered in snow and some deers and mountains on the background"
           layout="fill"
@@ -55,6 +64,17 @@ export default function Home() {
           width={300}
           height={20}
         ></Image>
+        <div
+          role="button"
+          onClick={handleClick}
+          className="absolute right-4 top-5"
+        >
+          {muted ? (
+            <VolumeX className="h-10 w-10 text-white"></VolumeX>
+          ) : (
+            <Volume2 className="h-10 w-10 text-white"></Volume2>
+          )}
+        </div>
       </div>
 
       <div className="mx-[25%] gap-10 justify-center py-20 flex flex-wrap items-center">
