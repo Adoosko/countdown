@@ -2,7 +2,8 @@
 import { cn } from "@/lib/utils";
 import { VolumeX, Volume2 } from "lucide-react";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
+import AudioPlayer from "react-h5-audio-player";
 import ReactPlayer from "react-player";
 
 export default function Home() {
@@ -11,8 +12,8 @@ export default function Home() {
   const [hours, setHours] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [timeChange, setTimeChange] = useState(false);
-  const [muted, setMuted] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(true);
+
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const countdown = () => {
     const now = new Date().getTime();
@@ -40,23 +41,24 @@ export default function Home() {
   };
   useEffect(() => {
     setTimeout(countdown, 1000);
-  }, [days, hours, minutes, seconds, timeChange]);
+  }, [days, seconds, hours, minutes]);
 
   const handleClick = () => {
-    setMuted(!muted);
     setIsPlaying(!isPlaying);
   };
   return (
     <main>
       <div className="w-[100vw] h-[100vh] z-[-1] fixed ">
-        <ReactPlayer url="/christmas-song.mp3" playing={isPlaying} loop />
         <Image
+          priority
           alt="The beautiful nature covered in snow and some deers and mountains on the background"
           layout="fill"
           src={"/christmas.jpg"}
           objectFit="cover"
+          className="w-auto h-auto"
         ></Image>
       </div>
+
       <div className="flex  items-center justify-center">
         <Image
           src={"/christmas-logo.png"}
@@ -64,15 +66,20 @@ export default function Home() {
           width={300}
           height={20}
         ></Image>
+
+        <div className="h-0 w-0">
+          <ReactPlayer url={"/christmas-song.mp3"} loop playing={isPlaying} />
+        </div>
+
         <div
           role="button"
           onClick={handleClick}
           className="absolute right-4 top-5"
         >
-          {muted ? (
-            <VolumeX className="h-10 w-10 text-white"></VolumeX>
-          ) : (
+          {isPlaying ? (
             <Volume2 className="h-10 w-10 text-white"></Volume2>
+          ) : (
+            <VolumeX className="h-10 w-10 text-white"></VolumeX>
           )}
         </div>
       </div>
@@ -119,8 +126,7 @@ export default function Home() {
             )}
           >
             <p className="text-red-600 drop-shadow-xl transition easy-in-out duration-150">
-              {" "}
-              {seconds}{" "}
+              {seconds}
             </p>
           </div>
           <p className="pt-5 text-2xl font-bold text-white">SECONDS</p>
